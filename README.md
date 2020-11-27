@@ -17,7 +17,7 @@ This project includes a driver for the [RV3028](https://www.microcrystal.com/en/
 
 | **Version** | **Description**               | **Date**    |
 |:-----------:|:-----------------------------:|:-----------:|
-| 1.0         | Initial release               |  |
+| 1.0         | Initial release               | 27.11.2020 |
 
 ## License
 

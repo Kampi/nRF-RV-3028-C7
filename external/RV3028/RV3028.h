@@ -42,6 +42,27 @@
   */
  rv3028_error_t RV3028_Init(rv3028_init_t* p_Init, rv3028_t* p_Device);
 
+ /** @brief		Configure the periodic update interrupt.
+  *  @param p_Device	Pointer to RV3028 device structure.
+  *  @param Source	Update source.
+  *  @param UseInt	Set to #true to enable the INT pin.
+  *  @return		Communication error code.
+  */
+ rv3028_error_t RV3028_InitUpdate(rv3028_t* p_Device, rv3028_ud_src_t Source, bool UseInt);
+
+ /** @brief		Configure the periodic countdown timer.
+  *  @param p_Device	Pointer to RV3028 device structure.
+  *  @param p_Config	Pointer to periodic countdown configuration structure.
+  *  @return		Communication error code.
+  */
+ rv3028_error_t RV3028_InitCountdown(rv3028_t* p_Device, rv3028_cd_config_t* p_Config);
+
+ /** @brief		Disable the periodic countdown timer.
+  *  @param p_Device	Pointer to RV3028 device structure.
+  *  @return		Communication error code.
+  */
+ rv3028_error_t RV3028_DisableCountdown(rv3028_t* p_Device);
+
  /** @brief		Disable the write protection of the RTC.
   *  @param p_Device	Pointer to RV3028 device structure.
   *  @param Password	Device password.

@@ -109,7 +109,7 @@
     RV3028_FLAG_BATTERY		= (0x01 << 0x05),	    /**< Battery Switch flag. */
  } rv3028_flags_t;
 
-  /** @brief Time stamp source for the RV3028.
+ /** @brief Time stamp source for the RV3028.
   */
  typedef enum
  {
@@ -117,7 +117,7 @@
     RV3028_TS_BAT		= 0x01,			    /**< Use the automatic backup switchover as time stamp source. */
  } rv3028_ts_src_t;
 
-  /** @brief Event filtering options for the RV3028.
+ /** @brief Event filtering options for the RV3028.
   */
  typedef enum
  {
@@ -126,6 +126,24 @@
     RV3028_FILTER_64HZ		= 0x02,			    /**< Sampling period 15.6 ms. Level detection. */
     RV3028_FILTER_8HZ		= 0x03,			    /**< Sampling period 125 ms. Level detection. */
  } rv3028_evt_filter_t;
+
+ /** @brief Period time update interrupt sources.
+  */
+ typedef enum
+ {
+    RV3028_UPDATE_SECOND	= 0x00,			    /**< Periodic time update every second. */
+    RV3028_UPDATE_MINUTE	= 0x01,			    /**< Periodic time update every minute. */
+ } rv3028_ud_src_t;
+
+ /** @brief Period countdown clock frequencies.
+  */
+ typedef enum
+ {
+    RV3028_COUNTDOWN_4096HZ	= 0x00,			    /**< Timer Clock Frequency: 4096 Hz. */
+    RV3028_COUNTDOWN_64HZ	= 0x01,			    /**< Timer Clock Frequency: 64 Hz. */
+    RV3028_COUNTDOWN_1HZ	= 0x02,			    /**< Timer Clock Frequency: 1 Hz. */
+    RV3028_COUNTDOWN_1HZ60	= 0x03,			    /**< Timer Clock Frequency: 1/60 Hz. */
+ } rv3028_cd_freq_t;
 
  /**@brief		Bus communication function pointer which should be mapped to the platform specific read functions of the user.
   * @param Device_Addr	I2C device address.
@@ -225,5 +243,16 @@
     uint8_t		Day;				    /**< Value for the weekday / date alarm.
 								 NOTE: Only important when \ref rv3028_alarm_t.EnableDayAlarm is set to #true. */
  } rv3028_alarm_t;
+
+ /** @brief RV3028 periodic countdown configuration object structure.
+  */
+ typedef struct
+ {
+    bool		EnableRepeat;                       /**< Set to #true to enable the repeat mode. */
+    bool		UseInt;                             /**< Set to #true to enable the INT pin. */
+    bool		UseClockOut;                        /**< Set to #true to enable the CLKOUT function of the timer. */
+    rv3028_cd_freq_t    Frequency;                          /**< Countdown timer frequency. */
+    uint16_t		Value;				    /**< Value for the countdown timer. */
+ } rv3028_cd_config_t;
 
 #endif /* RV3028_DEFS_H_ */

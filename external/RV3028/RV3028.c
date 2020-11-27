@@ -89,6 +89,7 @@
 #define RV3028_EECMD_WRITE                  0x21
 #define RV3028_EECMD_READ                   0x22
 
+#define RV3028_BIT_TRPT                     0x07
 #define RV3028_BIT_AE_WD		    0x07
 #define RV3028_BIT_AE_H			    0x07
 #define RV3028_BIT_AE_M			    0x07
@@ -98,10 +99,13 @@
 #define RV3028_BIT_EHL			    0x06
 #define RV3028_BIT_BSIE			    0x06
 #define RV3028_BIT_CLKSY		    0x06
+#define RV3028_BIT_UIE                      0x05
 #define RV3028_BIT_TCE			    0x05
 #define RV3028_BIT_BSF			    0x05
 #define RV3028_BIT_WADA			    0x05
 #define RV3028_BIT_AMPM			    0x05
+#define RV3028_BIT_TIE                      0x04
+#define RV3028_BIT_USEL                     0x04
 #define RV3028_BIT_FEDE			    0x04
 #define RV3028_BIT_ET			    0x04
 #define RV3028_BIT_AIE			    0x03
@@ -110,6 +114,7 @@
 #define RV3028_BIT_AF			    0x02
 #define RV3028_BIT_EIE			    0x02
 #define RV3028_BIT_TSR			    0x02
+#define RV3028_BIT_TE                       0x02
 #define RV3028_BIT_TSOW			    0x01
 #define RV3028_BIT_EVF			    0x01
 #define RV3028_BIT_12_24		    0x01
@@ -504,6 +509,96 @@ rv3028_error_t RV3028_Init(rv3028_init_t* p_Init, rv3028_t* p_Device)
     }
 
     return ErrorCode;
+}
+
+rv3028_error_t RV3028_InitUpdate(rv3028_t* p_Device, rv3028_ud_src_t Source, bool UseInt)
+{
+    // Clear the UF bit in the STATUS register
+    ErrorCode = RV3028_ClearFlags(p_Device, RV3028_FLAG_UPDATE);
+    if(ErrorCode != RV3028_NO_ERROR)
+    {
+	return ErrorCode;
+    }
+
+    // Set the clock source
+    ErrorCode = RV3028_ModifyRegister(RV3028_REG_CONTROL1, 0x01 << RV3028_BIT_USEL, (Source & 0x01) << RV3028_BIT_USEL, p_Device);
+    if(ErrorCode != RV3028_NO_ERROR)
+    {
+	return ErrorCode;
+    }
+
+    return RV3028_ModifyRegister(RV3028_REG_CONTROL2, 0x01 << RV3028_BIT_UIE, UseInt << RV3028_BIT_UIE, p_Device);
+}
+
+rv3028_error_t RV3028_InitCountdown(rv3028_t* p_Device, rv3028_cd_config_t* p_Config)
+{
+    uint8_t Temp[2] = {p_Config->Value & 0xFF, (p_Config->Value >> 0x08) & 0x0F};
+
+    // Clear the TF bit in the STATUS register
+    ErrorCode = RV3028_ClearFlags(p_Device, RV3028_FLAG_COUNTDOWN);
+    if(ErrorCode != RV3028_NO_ERROR)
+    {
+	return ErrorCode;
+    }
+
+    // Clear the TE bit in the CONTROL1 register
+    ErrorCode = RV3028_ModifyRegister(RV3028_REG_CONTROL1, 0x01 << RV3028_BIT_TE, 0x00 << RV3028_BIT_TE, p_Device);
+    if(ErrorCode != RV3028_NO_ERROR)
+    {
+	return ErrorCode;
+    }
+
+    // Set the timer frequency and the periodic mode
+    ErrorCode = RV3028_ModifyRegister(RV3028_REG_CONTROL1, (0x01 << RV3028_BIT_TRPT) | 0x03, (p_Config->EnableRepeat << RV3028_BIT_TRPT) | (p_Config->Frequency & 0x03), p_Device);
+    if(ErrorCode != RV3028_NO_ERROR)
+    {
+	return ErrorCode;
+    }
+
+    // Write the timer value
+    ErrorCode = RV3028_WriteRegister(RV3028_REG_TIMER_VALUE0, Temp, sizeof(uint16_t), p_Device);
+    if(ErrorCode != RV3028_NO_ERROR)
+    {
+	return ErrorCode;
+    }
+
+    // Set the TIE bit in the CONTROL2 register
+    ErrorCode = RV3028_ModifyRegister(RV3028_REG_CONTROL1, 0x01 << RV3028_BIT_TIE, (p_Config->UseInt | p_Config->UseClockOut) << RV3028_BIT_TIE, p_Device);
+    if(ErrorCode != RV3028_NO_ERROR)
+    {
+	return ErrorCode;
+    }
+
+    // Configure the CLKOUT register
+    ErrorCode = RV3028_ModifyRegister(RV3028_EEPROM_CLKOUT,
+				    (0x01 << RV3028_BIT_CLKOE) | 0x07,
+				    (0x01 << RV3028_BIT_CLKOE) | RV3028_CLKOUT_PRE,
+				    p_Device);
+    if(ErrorCode != RV3028_NO_ERROR)
+    {
+	return ErrorCode;
+    }
+
+    // Update the settings in the EEPROM
+    ErrorCode = RV3028_Update(p_Device);
+    if(ErrorCode != RV3028_NO_ERROR)
+    {
+	return ErrorCode;
+    }
+
+    // Load the settings from the EEPROM to make them active
+    ErrorCode = RV3028_Refresh(p_Device);
+    if(ErrorCode != RV3028_NO_ERROR)
+    {
+	return ErrorCode;
+    }
+
+    return RV3028_ModifyRegister(RV3028_REG_CONTROL1, 0x01 << RV3028_BIT_TE, 0x01 << RV3028_BIT_TE, p_Device);
+}
+
+rv3028_error_t RV3028_DisableCountdown(rv3028_t* p_Device)
+{
+    return RV3028_ModifyRegister(RV3028_REG_CONTROL1, 0x01 << RV3028_BIT_TE, 0x00 << RV3028_BIT_TE, p_Device);
 }
 
 rv3028_error_t RV3028_DisableWP(rv3028_t* p_Device, uint32_t Password)
