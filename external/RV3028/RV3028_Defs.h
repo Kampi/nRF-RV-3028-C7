@@ -38,11 +38,11 @@
  #include <stddef.h>
  #include <stdbool.h>
 
- /** @brief RV3028 I2C device slave address.
+ /**@brief RV3028 I2C device slave address.
   */
  #define RV3028_ADDRESS                      0x52
 
- /** @brief Error codes for the RV328 driver.
+ /**@brief Error codes for the RV328 driver.
   */
  typedef enum
  {
@@ -55,7 +55,7 @@
     RV3028_WP_ACTIVE		= 0x05,			    /**< Device is write protected. Please unprotect the device first. */
  } rv3028_error_t;
 
- /** @brief Hour modes supported by the RV3028.
+ /**@brief Hour modes supported by the RV3028.
   */
  typedef enum
  {
@@ -63,7 +63,7 @@
     RV3028_HOURMODE_12		= 0x01,			    /**< 12 hour mode. */
  } rv3028_hourmode_t;
 
- /** @brief Output clock frequencies supported by the RV3028.
+ /**@brief Output clock frequencies supported by the RV3028.
   */
  typedef enum
  {
@@ -76,7 +76,7 @@
     RV3028_CLKOUT_PRE		= 0x06,			    /**< Predefined period countdown timer interrupt. */
  } rv3028_clkout_t;
 
- /** @brief Trickle charger series resistance options supported by the RV3028.
+ /**@brief Trickle charger series resistance options supported by the RV3028.
   */
  typedef enum
  {
@@ -86,7 +86,7 @@
     RV3028_TCT_15K		= 0x03,			    /**< 3 kOhms series resistance. */
  } rv3028_tcr_t;
 
- /** @brief Battery switchover modes for the RV3028.
+ /**@brief Battery switchover modes for the RV3028.
   */
  typedef enum
  {
@@ -95,7 +95,7 @@
     RV3028_BAT_LSM		= 0x03,			    /**< Battery level switching mode (LSM). */
  } rv3028_bat_t;
 
- /** @brief Status flags that can be modified by the user.
+ /**@brief Status flags that can be modified by the user.
   */
  typedef enum
  {
@@ -107,7 +107,7 @@
     RV3028_FLAG_BATTERY		= (0x01 << 0x05),	    /**< Battery Switch flag. */
  } rv3028_flags_t;
 
- /** @brief Time stamp source for the RV3028.
+ /**@brief Time stamp source for the RV3028.
   */
  typedef enum
  {
@@ -115,7 +115,7 @@
     RV3028_TS_BAT		= 0x01,			    /**< Use the automatic backup switchover as time stamp source. */
  } rv3028_ts_src_t;
 
- /** @brief Event filtering options for the RV3028.
+ /**@brief Event filtering options for the RV3028.
   */
  typedef enum
  {
@@ -125,7 +125,7 @@
     RV3028_FILTER_8HZ		= 0x03,			    /**< Sampling period 125 ms. Level detection. */
  } rv3028_evt_filter_t;
 
- /** @brief Period time update interrupt sources.
+ /**@brief Period time update interrupt sources.
   */
  typedef enum
  {
@@ -133,7 +133,7 @@
     RV3028_UPDATE_MINUTE	= 0x01,			    /**< Periodic time update every minute. */
  } rv3028_ud_src_t;
 
- /** @brief Period countdown clock frequencies.
+ /**@brief Period countdown clock frequencies.
   */
  typedef enum
  {
@@ -161,7 +161,7 @@
   */
  typedef uint8_t (*rv3028_write_fptr_t)(uint8_t Device_Addr, uint8_t Reg_Addr, const uint8_t* p_Reg_Data, uint32_t Length);
 
- /** @brief RV3028 device initialization object structure.
+ /**@brief RV3028 device initialization object structure.
   */
  typedef struct
  {
@@ -192,7 +192,7 @@
     uint32_t		Password;			    /**< Initial password for the RTC. Set to a value > 0 to enable the password function. */
  } rv3028_init_t;
 
- /** @brief RV3028 device object structure.
+ /**@brief RV3028 device object structure.
   */
  typedef struct
  {
@@ -222,7 +222,7 @@
     rv3028_write_fptr_t p_Write;			    /**< Pointer to RV3028 I2C write function. */
  } rv3028_t;
 
- /** @brief RV3028 alarm configuration object structure.
+ /**@brief RV3028 alarm configuration object structure.
   */
  typedef struct
  {
@@ -243,7 +243,7 @@
 								 NOTE: Only important when \ref rv3028_alarm_t.EnableDayAlarm is set to #true. */
  } rv3028_alarm_t;
 
- /** @brief RV3028 periodic countdown configuration object structure.
+ /**@brief RV3028 periodic countdown configuration object structure.
   */
  typedef struct
  {
