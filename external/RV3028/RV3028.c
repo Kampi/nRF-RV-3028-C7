@@ -327,6 +327,7 @@ rv3028_error_t RV3028_Init(rv3028_init_t* p_Init, rv3028_t* p_Device)
     ErrorCode = RV3028_Refresh(p_Device);
     if(ErrorCode != RV3028_NO_ERROR)
     {
+	p_Device->IsInitialized = false;
 	return ErrorCode;
     }
 
@@ -334,6 +335,7 @@ rv3028_error_t RV3028_Init(rv3028_init_t* p_Init, rv3028_t* p_Device)
     ErrorCode = RV3028_EnableEERD(false, p_Device);
     if(ErrorCode != RV3028_NO_ERROR)
     {
+	p_Device->IsInitialized = false;
 	return ErrorCode;
     }
 
