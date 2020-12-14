@@ -53,6 +53,7 @@
 								 RV3028_Init function. */
     RV3028_NOT_READY		= 0x04,			    /**< Device function is not ready. Please initialize them first. */
     RV3028_WP_ACTIVE		= 0x05,			    /**< Device is write protected. Please unprotect the device first. */
+    RV3028_COMM_ERROR	= 0x06,			    /**< Communication error. */
  } rv3028_error_t;
 
  /**@brief Hour modes supported by the RV3028.
