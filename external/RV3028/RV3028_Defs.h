@@ -145,7 +145,7 @@
 
  /**@brief		Bus communication function pointer which should be mapped to the platform specific read functions of the user.
   * @param Device_Addr	I2C device address.
-  * @param Reg_Addr	8 bit register address of the sensor.
+  * @param Reg_Addr	Register address of the sensor.
   * @param Reg_Data	Data from the specified address.
   * @param Length	Length of the reg_data array.
   * @return		Communication error code.
@@ -154,6 +154,7 @@
 
  /**@brief		Bus communication function pointer which should be mapped to the platform specific write functions of the user.
   * @param Device_Addr	I2C device address.
+  * @param Reg_Addr	Register address of the sensor.
   * @param Reg_Data	Data to the specified address.
   * @param Length	Length of the reg_data array.
   * @return		Communication error code.
