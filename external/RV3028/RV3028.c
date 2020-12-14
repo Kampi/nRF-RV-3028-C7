@@ -194,9 +194,8 @@ static rv3028_error_t RV3028_WriteRegister(uint8_t Reg_Addr, const uint8_t* p_Re
 static rv3028_error_t RV3028_ModifyRegister(uint8_t Address, uint8_t Mask, uint8_t Value, rv3028_t* p_Device)
 {
     uint8_t Temp = 0x00;
-    uint8_t Addr_Temp = Address;
 
-    ErrorCode = RV3028_ReadRegister(Addr_Temp, &Temp, sizeof(Temp), p_Device);
+    ErrorCode = RV3028_ReadRegister(Address, &Temp, sizeof(Temp), p_Device);
     if(ErrorCode != RV3028_NO_ERROR)
     {
 	return ErrorCode;
@@ -205,7 +204,7 @@ static rv3028_error_t RV3028_ModifyRegister(uint8_t Address, uint8_t Mask, uint8
     Temp &= ~Mask;
     Temp |= Value & Mask;
 
-    return RV3028_WriteRegister(Addr_Temp, &Temp, sizeof(Temp), p_Device);
+    return RV3028_WriteRegister(Address, &Temp, sizeof(Temp), p_Device);
 }
 
 /** @brief	    Wait as long as the EEPROM is busy.
