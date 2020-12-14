@@ -40,6 +40,10 @@
  <Watch4>
   <Watches active="0" update="Never"/>
  </Watch4>
- <Files/>
+ <Files>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="17" y="306" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../external/RV3028/RV3028.c" selected="0" top="294" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="265" useTextEdit="1" openedFrom="G:/Dropbox/Git/Nordic/RV-3028-C7/external/RV3028/RV3028.c" useBinaryEdit="0" left="0" path="../../../external/RV3028/RV3028.h" selected="1" top="237" codecName="Default"/>
+ </Files>
  <ARMCrossStudioWindow activeProject="RV3028" fileDialogDefaultFilter="*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.hxx" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

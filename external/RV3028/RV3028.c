@@ -124,30 +124,30 @@
 
 static rv3028_error_t ErrorCode;
 
-/** @brief	    Convert a decimal value into a BCD value.
- *  @param Decimal  Decimal value.
- *  @return	    BCD value.
+/**@brief	    Convert a decimal value into a BCD value.
+ * @param Decimal   Decimal value.
+ * @return	    BCD value.
  */
 uint8_t DecimalToBCD(uint8_t Decimal)
 {
    return ((Decimal / 0x0A) << 0x04) | (Decimal % 0x0A);
 }
 
-/** @brief	    Convert a BCD value into a decimal value.
- *  @param Decimal  BCD value.
- *  @return	    Decimal value.
+/**@brief	    Convert a BCD value into a decimal value.
+ * @param Decimal   BCD value.
+ * @return	    Decimal value.
  */
 uint8_t BCDToDecimal(uint8_t BCD)
 {
    return ((BCD >> 0x04) * 0x0A) + (BCD & 0xF);
 }
 
-/** @brief		Read the content of one or more register from the RV3028.
- *  @param Reg_Addr	Register address.
- *  @param p_Reg_Data	Pointer to register data.
- *  @param Length	Data length.
- *  @param p_Device	Pointer to \ref rv3028_t device structure.
- *  @return		Communication error code.
+/**@brief		Read the content of one or more register from the RV3028.
+ * @param Reg_Addr	Register address.
+ * @param p_Reg_Data	Pointer to register data.
+ * @param Length	Data length.
+ * @param p_Device	Pointer to \ref rv3028_t device structure.
+ * @return		Communication error code.
  */
 static rv3028_error_t RV3028_ReadRegister(uint8_t Reg_Addr, uint8_t* p_Reg_Data, uint32_t Length, rv3028_t* p_Device)
 {
@@ -163,12 +163,12 @@ static rv3028_error_t RV3028_ReadRegister(uint8_t Reg_Addr, uint8_t* p_Reg_Data,
     return p_Device->p_Read(p_Device->DeviceAddr, Reg_Addr, p_Reg_Data, Length);
 }
 
-/** @brief		Write one or more data bytes into the RV3028.
- *  @param Reg_Addr	Register address.
- *  @param p_Reg_Data	Pointer to register data.
- *  @param Length	Data length.
- *  @param p_Device	Pointer to \ref rv3028_t device structure.
- *  @return		Communication error code.
+/**@brief		Write one or more data bytes into the RV3028.
+ * @param Reg_Addr	Register address.
+ * @param p_Reg_Data	Pointer to register data.
+ * @param Length	Data length.
+ * @param p_Device	Pointer to \ref rv3028_t device structure.
+ * @return		Communication error code.
  */
 static rv3028_error_t RV3028_WriteRegister(uint8_t Reg_Addr, const uint8_t* p_Reg_Data, uint32_t Length, rv3028_t* p_Device)
 {
@@ -184,12 +184,12 @@ static rv3028_error_t RV3028_WriteRegister(uint8_t Reg_Addr, const uint8_t* p_Re
     return p_Device->p_Write(p_Device->DeviceAddr, Reg_Addr, p_Reg_Data, Length);
 }
 
-/** @brief          Modify the value of a single register.
- *  @param Address  Register address.
- *  @param Mask	    Bit mask.
- *  @param Value    New value for masked bits.
- *  @param p_Device Pointer to \ref rv3028_t device structure.
- *  @return	    Communication error code.
+/**@brief	    Modify the value of a single register.
+ * @param Address   Register address.
+ * @param Mask	    Bit mask.
+ * @param Value	    New value for masked bits.
+ * @param p_Device  Pointer to \ref rv3028_t device structure.
+ * @return	    Communication error code.
  */
 static rv3028_error_t RV3028_ModifyRegister(uint8_t Address, uint8_t Mask, uint8_t Value, rv3028_t* p_Device)
 {
@@ -207,9 +207,9 @@ static rv3028_error_t RV3028_ModifyRegister(uint8_t Address, uint8_t Mask, uint8
     return RV3028_WriteRegister(Address, &Temp, sizeof(Temp), p_Device);
 }
 
-/** @brief	    Wait as long as the EEPROM is busy.
- *  @param p_Device Pointer to \ref rv3028_t device structure.
- *  @return	    Communication error code.
+/**@brief	    Wait as long as the EEPROM is busy.
+ * @param p_Device  Pointer to \ref rv3028_t device structure.
+ * @return	    Communication error code.
  */
 static rv3028_error_t RV3028_EEPROMWaitBusy(rv3028_t* p_Device)
 {
@@ -228,10 +228,10 @@ static rv3028_error_t RV3028_EEPROMWaitBusy(rv3028_t* p_Device)
     return ErrorCode;
 }
 
-/** @brief          Execute an EEPROM command.
- *  @param Command  EEPROM command code.
- *  @param p_Device Pointer to \ref rv3028_t device structure.
- *  @return	    Communication error code.
+/**@brief	    Execute an EEPROM command.
+ * @param Command   EEPROM command code.
+ * @param p_Device  Pointer to \ref rv3028_t device structure.
+ * @return	    Communication error code.
  */
 static rv3028_error_t RV3028_EEPROMCommand(uint8_t Command, rv3028_t* p_Device)
 {
@@ -252,19 +252,19 @@ static rv3028_error_t RV3028_EEPROMCommand(uint8_t Command, rv3028_t* p_Device)
     return RV3028_EEPROMWaitBusy(p_Device);
 }
 
-/** @brief          Enable or disable the auto refresh function of the RTC.
- *  @param Enable   Enable / Disable of the auto refresh function.
- *  @param p_Device Pointer to \ref rv3028_t device structure.
- *  @return	    Communication error code.
+/**@brief	    Enable or disable the auto refresh function of the RTC.
+ * @param Enable    Enable / Disable of the auto refresh function.
+ * @param p_Device  Pointer to \ref rv3028_t device structure.
+ * @return	    Communication error code.
  */
 static rv3028_error_t RV3028_EnableEERD(bool Enable, rv3028_t* p_Device)
 {
     return RV3028_ModifyRegister(RV3028_REG_CONTROL1, (0x01 << RV3028_BIT_EERD), ~(Enable << RV3028_BIT_EERD), p_Device);
 }
 
-/** @brief          Execute the UPDATE command to copy the configuration from the RAM into the EEPROM.
- *  @param p_Device Pointer to \ref rv3028_t device structure.
- *  @return	    Communication error code.
+/**@brief	    Execute the UPDATE command to copy the configuration from the RAM into the EEPROM.
+ * @param p_Device  Pointer to \ref rv3028_t device structure.
+ * @return	    Communication error code.
  */
 static rv3028_error_t RV3028_Update(rv3028_t* p_Device)
 {
@@ -283,9 +283,9 @@ static rv3028_error_t RV3028_Update(rv3028_t* p_Device)
     return RV3028_EnableEERD(true, p_Device);
 }
 
-/** @brief          Execute the REFRESH command to copy the configuration from the EEPROM into the RAM.
- *  @param p_Device Pointer to \ref rv3028_t device structure.
- *  @return	    Communication error code.
+/**@brief	    Execute the REFRESH command to copy the configuration from the EEPROM into the RAM.
+ * @param p_Device  Pointer to \ref rv3028_t device structure.
+ * @return	    Communication error code.
  */
 static rv3028_error_t RV3028_Refresh(rv3028_t* p_Device)
 {
