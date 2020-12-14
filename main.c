@@ -92,9 +92,7 @@ rv3028_error_t RV3028_Write(uint8_t Device_Addr, uint8_t Reg_Addr, const uint8_t
 
 rv3028_error_t RV3028_Read(uint8_t Device_Addr, uint8_t Reg_Addr, uint8_t* p_Reg_Data, uint32_t Length)
 {
-    uint8_t Register = Reg_Addr;
-
-    APP_ERROR_CHECK(nrf_drv_twi_tx(&TWI, Device_Addr, &Register, sizeof(uint8_t), true));
+    APP_ERROR_CHECK(nrf_drv_twi_tx(&TWI, Device_Addr, &Reg_Addr, sizeof(uint8_t), true));
     while(nrf_drv_twi_is_busy(&TWI));
     APP_ERROR_CHECK(nrf_drv_twi_rx(&TWI, Device_Addr, p_Reg_Data, Length));
     while(nrf_drv_twi_is_busy(&TWI));
