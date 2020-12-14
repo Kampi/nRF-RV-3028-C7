@@ -4,8 +4,6 @@
 *
 * Micro Crystal RV3028 I2C extreme low power RTC driver.
 *
-* Micro Crystal RV3028 I2C extreme low power RTC driver.
-*
 * GNU GENERAL PUBLIC LICENSE:
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
