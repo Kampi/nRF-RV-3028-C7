@@ -151,7 +151,7 @@ uint8_t BCDToDecimal(uint8_t BCD)
  */
 static rv3028_error_t RV3028_ReadRegister(uint8_t Reg_Addr, uint8_t* p_Reg_Data, uint32_t Length, rv3028_t* p_Device)
 {
-    if((p_Device == NULL) || (p_Device->p_Read == NULL) || (p_Reg_Data))
+    if((p_Device == NULL) || (p_Device->p_Read == NULL) || (p_Reg_Data == NULL))
     {
 	return RV3028_INVALID_PARAM;
     }
@@ -172,7 +172,7 @@ static rv3028_error_t RV3028_ReadRegister(uint8_t Reg_Addr, uint8_t* p_Reg_Data,
  */
 static rv3028_error_t RV3028_WriteRegister(uint8_t Reg_Addr, const uint8_t* p_Reg_Data, uint32_t Length, rv3028_t* p_Device)
 {
-    if((p_Device == NULL) || (p_Device->p_Write == NULL) || (p_Reg_Data))
+    if((p_Device == NULL) || (p_Device->p_Write == NULL) || (p_Reg_Data == NULL))
     {
 	return RV3028_INVALID_PARAM;
     }
