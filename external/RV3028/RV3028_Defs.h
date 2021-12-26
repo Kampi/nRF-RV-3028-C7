@@ -175,7 +175,7 @@
     bool		EnablePOR;			    /**< Boolean flag to enable the POR function on the INT pin. */
     bool		EnableBSIE;			    /**< Boolean flag to enable the BSIE function on the INT pin. */
     bool		EnableCharge;			    /**< Boolean flag to enable the trickle charger function.
-								 NOTE: Only needed when \ref rv3028_t.rv3028_bat_t is enabled. */
+								 NOTE: Only needed when \ref rv3028_t.BatteryMode is enabled. */
 
     rv3028_ts_src_t	TSMode;				    /**< Time stamp mode used by the RV3028.
 								 NOTE: Only needed when \ref rv3028_t.EnableTS is set to #true. */
@@ -184,7 +184,7 @@
     rv3028_clkout_t	Frequency;			    /**< Output frequency for the CLKOUT pin.
 								 NOTE: Only needed when \ref rv3028_t.EnableClkOut is set to #true. */
     rv3028_tcr_t	Resistance;			    /**< Trickle charger series resistance selection.
-								 NOTE: Only needed when \ref rv3028_t.rv3028_bat_t is enabled. */
+								 NOTE: Only needed when \ref rv3028_t.BatteryMode is enabled. */
     rv3028_hourmode_t	HourMode;			    /**< Hour mode for the RTC. */
 
     struct tm*		p_CurrentTime;			    /**< Pointer to initial time for the RTC. */
