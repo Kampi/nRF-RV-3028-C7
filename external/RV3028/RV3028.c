@@ -18,7 +18,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 *
-* Errors and commissions should be reported to DanielKampert@kampis-elektroecke.de.
+* Errors and commissions should be reported to DanielKampert@kampis-elektroecke.de
 *
 * <pre>
 * MODIFICATION HISTORY:
@@ -89,7 +89,6 @@
 #define RV3028_EECMD_WRITE                  0x21
 #define RV3028_EECMD_READ                   0x22
 
-#define RV3028_BIT_TRPT                     0x07
 #define RV3028_BIT_AE_WD		    0x07
 #define RV3028_BIT_AE_H			    0x07
 #define RV3028_BIT_AE_M			    0x07
@@ -99,13 +98,10 @@
 #define RV3028_BIT_EHL			    0x06
 #define RV3028_BIT_BSIE			    0x06
 #define RV3028_BIT_CLKSY		    0x06
-#define RV3028_BIT_UIE                      0x05
 #define RV3028_BIT_TCE			    0x05
 #define RV3028_BIT_BSF			    0x05
 #define RV3028_BIT_WADA			    0x05
 #define RV3028_BIT_AMPM			    0x05
-#define RV3028_BIT_TIE                      0x04
-#define RV3028_BIT_USEL                     0x04
 #define RV3028_BIT_FEDE			    0x04
 #define RV3028_BIT_ET			    0x04
 #define RV3028_BIT_AIE			    0x03
@@ -114,7 +110,6 @@
 #define RV3028_BIT_AF			    0x02
 #define RV3028_BIT_EIE			    0x02
 #define RV3028_BIT_TSR			    0x02
-#define RV3028_BIT_TE                       0x02
 #define RV3028_BIT_TSOW			    0x01
 #define RV3028_BIT_EVF			    0x01
 #define RV3028_BIT_12_24		    0x01
@@ -124,34 +119,34 @@
 
 static rv3028_error_t ErrorCode;
 
-/**@brief	    Convert a decimal value into a BCD value.
- * @param Decimal   Decimal value.
- * @return	    BCD value.
+/** @brief	    Convert a decimal value into a BCD value.
+ *  @param Decimal  Decimal value.
+ *  @return	    BCD value.
  */
-uint8_t DecimalToBCD(uint8_t Decimal)
+static inline uint8_t DecimalToBCD(uint8_t Decimal)
 {
    return ((Decimal / 0x0A) << 0x04) | (Decimal % 0x0A);
 }
 
-/**@brief	    Convert a BCD value into a decimal value.
- * @param Decimal   BCD value.
- * @return	    Decimal value.
+/** @brief	    Convert a BCD value into a decimal value.
+ *  @param Decimal  BCD value.
+ *  @return	    Decimal value.
  */
-uint8_t BCDToDecimal(uint8_t BCD)
+static inline uint8_t BCDToDecimal(uint8_t BCD)
 {
    return ((BCD >> 0x04) * 0x0A) + (BCD & 0xF);
 }
 
-/**@brief		Read the content of one or more register from the RV3028.
- * @param Reg_Addr	Register address.
- * @param p_Reg_Data	Pointer to register data.
- * @param Length	Data length.
- * @param p_Device	Pointer to \ref rv3028_t device structure.
- * @return		Communication error code.
+/** @brief		Read the content of one or more register from the RV3028.
+ *  @param Reg_Addr	Register address.
+ *  @param p_Reg_Data	Pointer to register data.
+ *  @param Length	Data length.
+ *  @param p_Device	Pointer to \ref rv3028_t device structure.
+ *  @return		Communication error code.
  */
 static rv3028_error_t RV3028_ReadRegister(uint8_t Reg_Addr, uint8_t* p_Reg_Data, uint32_t Length, rv3028_t* p_Device)
 {
-    if(p_Device == NULL)
+    if((p_Device == NULL) || (p_Device->p_Read == NULL) || (p_Reg_Data == NULL))
     {
 	return RV3028_INVALID_PARAM;
     }
@@ -163,16 +158,16 @@ static rv3028_error_t RV3028_ReadRegister(uint8_t Reg_Addr, uint8_t* p_Reg_Data,
     return p_Device->p_Read(p_Device->DeviceAddr, Reg_Addr, p_Reg_Data, Length);
 }
 
-/**@brief		Write one or more data bytes into the RV3028.
- * @param Reg_Addr	Register address.
- * @param p_Reg_Data	Pointer to register data.
- * @param Length	Data length.
- * @param p_Device	Pointer to \ref rv3028_t device structure.
- * @return		Communication error code.
+/** @brief		Write one or more data bytes into the RV3028.
+ *  @param Reg_Addr	Register address.
+ *  @param p_Reg_Data	Pointer to register data.
+ *  @param Length	Data length.
+ *  @param p_Device	Pointer to \ref rv3028_t device structure.
+ *  @return		Communication error code.
  */
 static rv3028_error_t RV3028_WriteRegister(uint8_t Reg_Addr, const uint8_t* p_Reg_Data, uint32_t Length, rv3028_t* p_Device)
 {
-    if(p_Device == NULL)
+    if((p_Device == NULL) || (p_Device->p_Write == NULL) || (p_Reg_Data == NULL))
     {
 	return RV3028_INVALID_PARAM;
     }
@@ -184,18 +179,19 @@ static rv3028_error_t RV3028_WriteRegister(uint8_t Reg_Addr, const uint8_t* p_Re
     return p_Device->p_Write(p_Device->DeviceAddr, Reg_Addr, p_Reg_Data, Length);
 }
 
-/**@brief	    Modify the value of a single register.
- * @param Address   Register address.
- * @param Mask	    Bit mask.
- * @param Value	    New value for masked bits.
- * @param p_Device  Pointer to \ref rv3028_t device structure.
- * @return	    Communication error code.
+/** @brief          Modify the value of a single register.
+ *  @param Address  Register address.
+ *  @param Mask	    Bit mask.
+ *  @param Value    New value for masked bits.
+ *  @param p_Device Pointer to \ref rv3028_t device structure.
+ *  @return	    Communication error code.
  */
 static rv3028_error_t RV3028_ModifyRegister(uint8_t Address, uint8_t Mask, uint8_t Value, rv3028_t* p_Device)
 {
     uint8_t Temp = 0x00;
+    uint8_t Addr_Temp = Address;
 
-    ErrorCode = RV3028_ReadRegister(Address, &Temp, sizeof(Temp), p_Device);
+    ErrorCode = RV3028_ReadRegister(Addr_Temp, &Temp, sizeof(Temp), p_Device);
     if(ErrorCode != RV3028_NO_ERROR)
     {
 	return ErrorCode;
@@ -204,12 +200,12 @@ static rv3028_error_t RV3028_ModifyRegister(uint8_t Address, uint8_t Mask, uint8
     Temp &= ~Mask;
     Temp |= Value & Mask;
 
-    return RV3028_WriteRegister(Address, &Temp, sizeof(Temp), p_Device);
+    return RV3028_WriteRegister(Addr_Temp, &Temp, sizeof(Temp), p_Device);
 }
 
-/**@brief	    Wait as long as the EEPROM is busy.
- * @param p_Device  Pointer to \ref rv3028_t device structure.
- * @return	    Communication error code.
+/** @brief	    Wait as long as the EEPROM is busy.
+ *  @param p_Device Pointer to \ref rv3028_t device structure.
+ *  @return	    Communication error code.
  */
 static rv3028_error_t RV3028_EEPROMWaitBusy(rv3028_t* p_Device)
 {
@@ -228,10 +224,10 @@ static rv3028_error_t RV3028_EEPROMWaitBusy(rv3028_t* p_Device)
     return ErrorCode;
 }
 
-/**@brief	    Execute an EEPROM command.
- * @param Command   EEPROM command code.
- * @param p_Device  Pointer to \ref rv3028_t device structure.
- * @return	    Communication error code.
+/** @brief          Execute an EEPROM command.
+ *  @param Command  EEPROM command code.
+ *  @param p_Device Pointer to \ref rv3028_t device structure.
+ *  @return	    Communication error code.
  */
 static rv3028_error_t RV3028_EEPROMCommand(uint8_t Command, rv3028_t* p_Device)
 {
@@ -252,19 +248,19 @@ static rv3028_error_t RV3028_EEPROMCommand(uint8_t Command, rv3028_t* p_Device)
     return RV3028_EEPROMWaitBusy(p_Device);
 }
 
-/**@brief	    Enable or disable the auto refresh function of the RTC.
- * @param Enable    Enable / Disable of the auto refresh function.
- * @param p_Device  Pointer to \ref rv3028_t device structure.
- * @return	    Communication error code.
+/** @brief          Enable or disable the auto refresh function of the RTC.
+ *  @param Enable   Enable / Disable of the auto refresh function.
+ *  @param p_Device Pointer to \ref rv3028_t device structure.
+ *  @return	    Communication error code.
  */
 static rv3028_error_t RV3028_EnableEERD(bool Enable, rv3028_t* p_Device)
 {
     return RV3028_ModifyRegister(RV3028_REG_CONTROL1, (0x01 << RV3028_BIT_EERD), ~(Enable << RV3028_BIT_EERD), p_Device);
 }
 
-/**@brief	    Execute the UPDATE command to copy the configuration from the RAM into the EEPROM.
- * @param p_Device  Pointer to \ref rv3028_t device structure.
- * @return	    Communication error code.
+/** @brief          Execute the UPDATE command to copy the configuration from the RAM into the EEPROM.
+ *  @param p_Device Pointer to \ref rv3028_t device structure.
+ *  @return	    Communication error code.
  */
 static rv3028_error_t RV3028_Update(rv3028_t* p_Device)
 {
@@ -283,9 +279,9 @@ static rv3028_error_t RV3028_Update(rv3028_t* p_Device)
     return RV3028_EnableEERD(true, p_Device);
 }
 
-/**@brief	    Execute the REFRESH command to copy the configuration from the EEPROM into the RAM.
- * @param p_Device  Pointer to \ref rv3028_t device structure.
- * @return	    Communication error code.
+/** @brief          Execute the REFRESH command to copy the configuration from the EEPROM into the RAM.
+ *  @param p_Device Pointer to \ref rv3028_t device structure.
+ *  @return	    Communication error code.
  */
 static rv3028_error_t RV3028_Refresh(rv3028_t* p_Device)
 {
@@ -327,7 +323,6 @@ rv3028_error_t RV3028_Init(rv3028_init_t* p_Init, rv3028_t* p_Device)
     ErrorCode = RV3028_Refresh(p_Device);
     if(ErrorCode != RV3028_NO_ERROR)
     {
-	p_Device->IsInitialized = false;
 	return ErrorCode;
     }
 
@@ -335,7 +330,6 @@ rv3028_error_t RV3028_Init(rv3028_init_t* p_Init, rv3028_t* p_Device)
     ErrorCode = RV3028_EnableEERD(false, p_Device);
     if(ErrorCode != RV3028_NO_ERROR)
     {
-	p_Device->IsInitialized = false;
 	return ErrorCode;
     }
 
@@ -510,96 +504,6 @@ rv3028_error_t RV3028_Init(rv3028_init_t* p_Init, rv3028_t* p_Device)
     }
 
     return ErrorCode;
-}
-
-rv3028_error_t RV3028_InitUpdate(rv3028_t* p_Device, rv3028_ud_src_t Source, bool UseInt)
-{
-    // Clear the UF bit in the STATUS register
-    ErrorCode = RV3028_ClearFlags(p_Device, RV3028_FLAG_UPDATE);
-    if(ErrorCode != RV3028_NO_ERROR)
-    {
-	return ErrorCode;
-    }
-
-    // Set the clock source
-    ErrorCode = RV3028_ModifyRegister(RV3028_REG_CONTROL1, 0x01 << RV3028_BIT_USEL, (Source & 0x01) << RV3028_BIT_USEL, p_Device);
-    if(ErrorCode != RV3028_NO_ERROR)
-    {
-	return ErrorCode;
-    }
-
-    return RV3028_ModifyRegister(RV3028_REG_CONTROL2, 0x01 << RV3028_BIT_UIE, UseInt << RV3028_BIT_UIE, p_Device);
-}
-
-rv3028_error_t RV3028_InitCountdown(rv3028_t* p_Device, rv3028_cd_config_t* p_Config)
-{
-    uint8_t Temp[2] = {p_Config->Value & 0xFF, (p_Config->Value >> 0x08) & 0x0F};
-
-    // Clear the TF bit in the STATUS register
-    ErrorCode = RV3028_ClearFlags(p_Device, RV3028_FLAG_COUNTDOWN);
-    if(ErrorCode != RV3028_NO_ERROR)
-    {
-	return ErrorCode;
-    }
-
-    // Clear the TE bit in the CONTROL1 register
-    ErrorCode = RV3028_ModifyRegister(RV3028_REG_CONTROL1, 0x01 << RV3028_BIT_TE, 0x00 << RV3028_BIT_TE, p_Device);
-    if(ErrorCode != RV3028_NO_ERROR)
-    {
-	return ErrorCode;
-    }
-
-    // Set the timer frequency and the periodic mode
-    ErrorCode = RV3028_ModifyRegister(RV3028_REG_CONTROL1, (0x01 << RV3028_BIT_TRPT) | 0x03, (p_Config->EnableRepeat << RV3028_BIT_TRPT) | (p_Config->Frequency & 0x03), p_Device);
-    if(ErrorCode != RV3028_NO_ERROR)
-    {
-	return ErrorCode;
-    }
-
-    // Write the timer value
-    ErrorCode = RV3028_WriteRegister(RV3028_REG_TIMER_VALUE0, Temp, sizeof(uint16_t), p_Device);
-    if(ErrorCode != RV3028_NO_ERROR)
-    {
-	return ErrorCode;
-    }
-
-    // Set the TIE bit in the CONTROL2 register
-    ErrorCode = RV3028_ModifyRegister(RV3028_REG_CONTROL1, 0x01 << RV3028_BIT_TIE, (p_Config->UseInt | p_Config->UseClockOut) << RV3028_BIT_TIE, p_Device);
-    if(ErrorCode != RV3028_NO_ERROR)
-    {
-	return ErrorCode;
-    }
-
-    // Configure the CLKOUT register
-    ErrorCode = RV3028_ModifyRegister(RV3028_EEPROM_CLKOUT,
-				    (0x01 << RV3028_BIT_CLKOE) | 0x07,
-				    (0x01 << RV3028_BIT_CLKOE) | RV3028_CLKOUT_PRE,
-				    p_Device);
-    if(ErrorCode != RV3028_NO_ERROR)
-    {
-	return ErrorCode;
-    }
-
-    // Update the settings in the EEPROM
-    ErrorCode = RV3028_Update(p_Device);
-    if(ErrorCode != RV3028_NO_ERROR)
-    {
-	return ErrorCode;
-    }
-
-    // Load the settings from the EEPROM to make them active
-    ErrorCode = RV3028_Refresh(p_Device);
-    if(ErrorCode != RV3028_NO_ERROR)
-    {
-	return ErrorCode;
-    }
-
-    return RV3028_ModifyRegister(RV3028_REG_CONTROL1, 0x01 << RV3028_BIT_TE, 0x01 << RV3028_BIT_TE, p_Device);
-}
-
-rv3028_error_t RV3028_DisableCountdown(rv3028_t* p_Device)
-{
-    return RV3028_ModifyRegister(RV3028_REG_CONTROL1, 0x01 << RV3028_BIT_TE, 0x00 << RV3028_BIT_TE, p_Device);
 }
 
 rv3028_error_t RV3028_DisableWP(rv3028_t* p_Device, uint32_t Password)
